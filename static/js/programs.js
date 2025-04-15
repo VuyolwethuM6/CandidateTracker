@@ -77,9 +77,14 @@ function displayProgramsTable(programs) {
             <td>${program.pwd_percent}% (${program.pwd_count})</td>
             <td>${targetsMetHtml}</td>
             <td>
-                <button class="btn btn-sm btn-primary view-program" data-program="${program.name}">
-                    <i class="fas fa-eye"></i> View
-                </button>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-primary view-program" data-program="${program.name}">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-program" data-program="${program.name}">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
             </td>
         `;
         
@@ -105,6 +110,16 @@ function displayProgramsTable(programs) {
         button.addEventListener('click', function() {
             const programName = this.getAttribute('data-program');
             loadProgramCandidates(programName);
+        });
+    });
+    
+    // Add event listeners to delete program buttons
+    document.querySelectorAll('.delete-program').forEach(button => {
+        button.addEventListener('click', function() {
+            const programName = this.getAttribute('data-program');
+            if (confirm(`Are you sure you want to delete the program "${programName}" and all its candidate data? This action cannot be undone.`)) {
+                deleteProgram(programName);
+            }
         });
     });
 }
@@ -250,5 +265,47 @@ function deleteCandidate(candidateId, program) {
     .catch(error => {
         console.error('Error deleting candidate:', error);
         alert('Error deleting candidate. Please try again.');
+    });
+}
+
+/**
+ * Delete an entire program
+ */
+function deleteProgram(programName) {
+    fetch('/api/programs/delete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            program_name: programName
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Show success alert
+            alert(data.message);
+            
+            // Reload programs list
+            loadProgramsData();
+            
+            // Hide program details section if it's showing the deleted program
+            const selectedProgramName = document.getElementById('selected-program-name').textContent;
+            if (selectedProgramName === programName) {
+                document.getElementById('program-details-section').style.display = 'none';
+            }
+        } else {
+            alert(`Error: ${data.error}`);
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting program:', error);
+        alert('Error deleting program. Please try again.');
     });
 }

@@ -31,9 +31,22 @@
             <!-- Sidebar -->
             <div class="col-md-3 col-xl-2 sidebar">
                 <div class="d-flex flex-column p-3 min-vh-100">
-                    <a href="/" class="d-flex align-items-center mb-4 me-md-auto text-decoration-none">
-                        <i class="fas fa-chart-line fa-2x me-2 text-primary"></i>
-                        <span class="fs-4 fw-bold">Candidate Dashboard</span>
+                    <a href="/" class="d-flex align-items-center justify-content-center mb-4 text-decoration-none">
+                        <!-- Logo area - can be replaced with an actual logo image -->
+                        <div class="logo-container text-center mb-2">
+                            <!-- If using an image logo (recommended) -->
+                            {% if logo_image_exists %}
+                            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Dashboard Logo" class="logo-image img-fluid" style="max-height: 80px;">
+                            {% else %}
+                            <!-- Fallback to icon/text -->
+                            <div class="logo-icon-container rounded-circle bg-primary bg-gradient p-3 d-inline-flex justify-content-center align-items-center" style="width: 80px; height: 80px;">
+                                <i class="fas fa-chart-line fa-2x text-white"></i>
+                            </div>
+                            <div class="mt-2">
+                                <span class="fs-4 fw-bold">Candidate Dashboard</span>
+                            </div>
+                            {% endif %}
+                        </div>
                     </a>
                     
                     <ul class="nav nav-pills flex-column mb-auto gap-2">

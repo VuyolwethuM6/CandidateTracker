@@ -51,10 +51,15 @@ TOTAL_TARGET = 610
 FEMALE_TARGET_PERCENT = 70
 PWD_TARGET_PERCENT = 5
 
+def check_logo_exists():
+    """Check if a custom logo image exists."""
+    logo_path = os.path.join('static', 'images', 'logo.png')
+    return os.path.exists(logo_path)
+
 @app.route('/')
 def home():
     """Render the home dashboard page."""
-    return render_template('home.html')
+    return render_template('home.html', logo_image_exists=check_logo_exists())
 
 @app.route('/upload')
 def upload():
@@ -423,6 +428,30 @@ def delete_candidate():
     
     except Exception as e:
         logging.error(f"Error deleting candidate: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/programs/delete', methods=['POST'])
+def delete_program():
+    """API endpoint to delete an entire program."""
+    try:
+        data = request.json
+        program_name = data.get('program_name')
+        
+        if not program_name:
+            return jsonify({'error': 'Program name is required'}), 400
+        
+        file_path = os.path.join(DATA_DIR, f"{program_name}.csv")
+        
+        if not os.path.exists(file_path):
+            return jsonify({'error': 'Program file not found'}), 404
+        
+        # Delete the program file
+        os.remove(file_path)
+        
+        return jsonify({'success': True, 'message': f'Program "{program_name}" deleted successfully'})
+    
+    except Exception as e:
+        logging.error(f"Error deleting program: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
