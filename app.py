@@ -64,17 +64,17 @@ def home():
 @app.route('/upload')
 def upload():
     """Render the upload page for program data."""
-    return render_template('upload.html')
+    return render_template('upload.html', logo_image_exists=check_logo_exists())
 
 @app.route('/programs')
 def programs():
     """Render the programs page."""
-    return render_template('programs.html')
+    return render_template('programs.html', logo_image_exists=check_logo_exists())
 
 @app.route('/candidates')
 def candidates():
     """Render the candidates management page."""
-    return render_template('candidates.html')
+    return render_template('candidates.html', logo_image_exists=check_logo_exists())
 
 @app.route('/upload-program', methods=['POST'])
 def upload_program():
