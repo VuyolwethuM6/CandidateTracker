@@ -18,16 +18,30 @@ DATA_DIR = './data'
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
 
-# Define required columns for uploaded files
-REQUIRED_COLUMNS = [
-    'Candidate ID', 'First Name', 'Surname', 'South African ID Number', 
-    'Age', 'Email Address', 'Contact Numbers', 'Home Language', 
-    'Province and Suburb', 'Race', 'Gender', 'Disability Status',
-    'Highest Qualification', 'NQF Level', 'Qualification Field', 'Institution Name'
-]
+# Define required columns for uploaded files with possible variations
+REQUIRED_COLUMNS = {
+    'Candidate ID': ['Candidate ID', 'CandidateID', 'ID', 'Candidate_ID', 'Applicant ID'],
+    'First Name': ['First Name', 'FirstName', 'First_Name', 'Name', 'Given Name', 'First'], 
+    'Surname': ['Surname', 'Last Name', 'LastName', 'Last_Name', 'Family Name'],
+    'South African ID Number': ['South African ID Number', 'SA ID Number', 'ID Number', 'SA_ID', 'National ID', 'Identity Number'],
+    'Age': ['Age', 'Years'],
+    'Email Address': ['Email Address', 'Email', 'E-mail', 'EmailAddress', 'Contact Email'],
+    'Contact Numbers': ['Contact Numbers', 'Phone', 'Mobile', 'Telephone', 'Contact Number', 'Phone Number', 'Cell Number'],
+    'Home Language': ['Home Language', 'Language', 'Mother Tongue', 'First Language'],
+    'Province and Suburb': ['Province and Suburb', 'Address', 'Location', 'Residence', 'Region', 'Province', 'Suburb'],
+    'Race': ['Race', 'Ethnicity'],
+    'Gender': ['Gender', 'Sex'],
+    'Disability Status': ['Disability Status', 'Disability', 'PWD Status', 'PWD', 'Disabled'],
+    'Highest Qualification': ['Highest Qualification', 'Qualification', 'Education', 'Degree', 'Academic Qualification'],
+    'NQF Level': ['NQF Level', 'NQF', 'Qualification Level', 'Education Level'],
+    'Qualification Field': ['Qualification Field', 'Field of Study', 'Study Field', 'Discipline', 'Major'],
+    'Institution Name': ['Institution Name', 'Institution', 'University', 'College', 'School', 'Academy']
+}
 
-# Optional column
-OPTIONAL_COLUMNS = ['Employment Status']
+# Optional columns with variations
+OPTIONAL_COLUMNS = {
+    'Employment Status': ['Employment Status', 'Employment', 'Job Status', 'Working Status', 'Employed']
+}
 
 # Define target metrics
 TOTAL_TARGET = 610
@@ -93,15 +107,62 @@ def upload_program():
         else:  # .xlsx
             df = pd.read_excel(program_file)
         
-        # Validate required columns
-        missing_columns = [col for col in REQUIRED_COLUMNS if col not in df.columns]
-        if missing_columns:
-            flash(f'Missing required columns: {", ".join(missing_columns)}', 'danger')
+        # Map column variations to standard column names
+        mapped_columns = {}
+        missing_standard_columns = []
+        
+        # Create a dictionary mapping all variations to the standard column names
+        all_variations = {}
+        for standard_col, variations in REQUIRED_COLUMNS.items():
+            for variation in variations:
+                all_variations[variation.lower()] = standard_col
+        
+        # Also add optional columns to all_variations
+        for standard_col, variations in OPTIONAL_COLUMNS.items():
+            for variation in variations:
+                all_variations[variation.lower()] = standard_col
+        
+        # Check for each required standard column if we can find a matching column in the dataframe
+        for standard_col in REQUIRED_COLUMNS.keys():
+            found = False
+            
+            # First check if exact column name exists
+            if standard_col in df.columns:
+                mapped_columns[standard_col] = standard_col
+                found = True
+            else:
+                # Check for each column in the dataframe if it matches any of our known variations
+                for col in df.columns:
+                    if col.lower() in all_variations and all_variations[col.lower()] == standard_col:
+                        mapped_columns[standard_col] = col
+                        found = True
+                        break
+            
+            if not found:
+                missing_standard_columns.append(standard_col)
+        
+        # If required columns are missing, show error
+        if missing_standard_columns:
+            flash(f'Missing required columns: {", ".join(missing_standard_columns)}', 'danger')
             return redirect(url_for('upload'))
         
-        # Save the data as CSV
+        # Create a new dataframe with standardized column names
+        standardized_df = pd.DataFrame()
+        
+        # Copy data from original columns to standardized columns
+        for standard_col, original_col in mapped_columns.items():
+            standardized_df[standard_col] = df[original_col]
+        
+        # Check for optional columns
+        for standard_col, variations in OPTIONAL_COLUMNS.items():
+            for col in df.columns:
+                if col in variations or col.lower() in [v.lower() for v in variations]:
+                    standardized_df[standard_col] = df[col]
+                    break
+        
+        # Save the standardized data as CSV
         output_path = os.path.join(DATA_DIR, f"{program_name}.csv")
-        df.to_csv(output_path, index=False)
+        standardized_df.to_csv(output_path, index=False)
         
         flash(f'Successfully uploaded data for program: {program_name}', 'success')
         return redirect(url_for('programs'))

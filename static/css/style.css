@@ -1,8 +1,17 @@
-/* Main Layout */
-body {
-    overflow-x: hidden;
+/* Modern Dashboard Layout */
+:root {
+    --sidebar-width: 260px;
+    --header-height: 60px;
+    --primary-gradient: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-info) 100%);
 }
 
+body {
+    overflow-x: hidden;
+    background-color: var(--bs-body-bg);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Sidebar Styling */
 .sidebar {
     position: sticky;
     top: 0;
@@ -10,48 +19,97 @@ body {
     padding-top: 1rem;
     overflow-y: auto;
     z-index: 1000;
+    background-color: var(--bs-dark);
+    transition: all 0.3s ease;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.sidebar .nav-link {
+    border-radius: 8px;
+    margin: 0.2rem 0;
+    transition: all 0.2s ease;
+    padding: 0.8rem 1rem;
+}
+
+.sidebar .nav-link:not(.active):hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
 }
 
 .main-content {
     min-height: 100vh;
     padding-bottom: 2rem;
+    background-color: var(--bs-body-bg);
 }
 
-/* Dashboard Cards */
+/* Card Styling */
 .card {
+    border: none;
     transition: all 0.3s ease;
-    border-radius: 0.5rem;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    font-weight: 600;
+    border-bottom: none;
 }
 
 /* Progress Bars */
 .progress {
-    border-radius: 0.5rem;
+    border-radius: 1rem;
     overflow: hidden;
+    height: 0.75rem;
+    background-color: var(--bs-light);
+}
+
+.progress-bar {
+    transition: width 1s ease;
 }
 
 /* DataTables Customization */
 .dataTables_wrapper .dataTables_filter {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .dataTables_wrapper .dataTables_filter input {
-    border-radius: 0.25rem;
-    padding: 0.375rem 0.75rem;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
     border: 1px solid var(--bs-border-color);
+    background-color: var(--bs-body-bg);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-/* Target Status Indicators */
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 0;
+}
+
+.table th {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Status Indicators */
 .target-indicator {
-    width: 1rem;
-    height: 1rem;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     display: inline-block;
     margin-right: 0.5rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .target-met {
@@ -65,6 +123,7 @@ body {
 /* Chart Containers */
 canvas {
     max-width: 100%;
+    max-height: 350px;
 }
 
 /* Responsive adjustments */
@@ -79,17 +138,107 @@ canvas {
     }
 }
 
-/* Custom card status colors */
+/* Card Status Variations */
 .card-status-good {
-    border-color: var(--bs-success);
+    border-left: 4px solid var(--bs-success);
 }
 
 .card-status-warning {
-    border-color: var(--bs-warning);
+    border-left: 4px solid var(--bs-warning);
 }
 
 .card-status-danger {
-    border-color: var(--bs-danger);
+    border-left: 4px solid var(--bs-danger);
+}
+
+/* Form Elements */
+.form-control, .form-select {
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--bs-border-color);
+    background-color: var(--bs-body-bg);
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary-gradient);
+    border: none;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 0.5rem 1rem rgba(var(--bs-primary-rgb), 0.15);
+    transform: translateY(-2px);
+}
+
+/* Action Buttons */
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    margin-right: 5px;
+    transition: all 0.2s ease;
+}
+
+.btn-icon:hover {
+    transform: translateY(-2px);
+}
+
+/* Animation for loading states */
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.loading-pulse {
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* Accordion customization */
+.accordion-button:not(.collapsed) {
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+    color: var(--bs-primary);
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(var(--bs-primary-rgb), 0.5);
+}
+
+/* Tooltips and badges */
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    border-radius: 6px;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 8px;
+    border: none;
 }
 
 /* Form validation styling */
@@ -103,14 +252,21 @@ canvas {
     background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
 }
 
-/* Action buttons in tables */
-.btn-icon {
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bs-body-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bs-secondary);
     border-radius: 4px;
-    margin-right: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--bs-primary);
 }

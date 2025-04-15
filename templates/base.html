@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Candidate Management Dashboard</title>
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
     
@@ -24,41 +29,45 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <div class="col-md-3 col-xl-2 bg-dark sidebar">
+            <div class="col-md-3 col-xl-2 sidebar">
                 <div class="d-flex flex-column p-3 min-vh-100">
-                    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                        <span class="fs-4">Candidate Dashboard</span>
+                    <a href="/" class="d-flex align-items-center mb-4 me-md-auto text-decoration-none">
+                        <i class="fas fa-chart-line fa-2x me-2 text-primary"></i>
+                        <span class="fs-4 fw-bold">Candidate Dashboard</span>
                     </a>
-                    <hr>
-                    <ul class="nav nav-pills flex-column mb-auto">
+                    
+                    <ul class="nav nav-pills flex-column mb-auto gap-2">
                         <li class="nav-item">
-                            <a href="{{ url_for('home') }}" class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page">
-                                <i class="fas fa-home me-2"></i>
-                                Home
+                            <a href="{{ url_for('home') }}" class="nav-link {% if request.path == '/' %}active{% else %}text-white{% endif %} d-flex align-items-center" aria-current="page">
+                                <i class="fas fa-home me-3"></i>
+                                <span>Dashboard</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="{{ url_for('upload') }}" class="nav-link {% if '/upload' in request.path %}active{% endif %}">
-                                <i class="fas fa-upload me-2"></i>
-                                Upload
+                        <li class="nav-item">
+                            <a href="{{ url_for('upload') }}" class="nav-link {% if '/upload' in request.path %}active{% else %}text-white{% endif %} d-flex align-items-center">
+                                <i class="fas fa-upload me-3"></i>
+                                <span>Upload Data</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="{{ url_for('programs') }}" class="nav-link {% if '/programs' in request.path %}active{% endif %}">
-                                <i class="fas fa-project-diagram me-2"></i>
-                                Programs
+                        <li class="nav-item">
+                            <a href="{{ url_for('programs') }}" class="nav-link {% if '/programs' in request.path %}active{% else %}text-white{% endif %} d-flex align-items-center">
+                                <i class="fas fa-project-diagram me-3"></i>
+                                <span>Programs</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="{{ url_for('candidates') }}" class="nav-link {% if '/candidates' in request.path %}active{% endif %}">
-                                <i class="fas fa-users me-2"></i>
-                                Manage Candidates
+                        <li class="nav-item">
+                            <a href="{{ url_for('candidates') }}" class="nav-link {% if '/candidates' in request.path %}active{% else %}text-white{% endif %} d-flex align-items-center">
+                                <i class="fas fa-users me-3"></i>
+                                <span>Manage Candidates</span>
                             </a>
                         </li>
                     </ul>
-                    <hr>
-                    <div class="text-muted small">
-                        <p>Candidate Management System</p>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center p-3 rounded-3 bg-secondary bg-opacity-25">
+                        <p class="small mb-1">Candidate Management System</p>
+                        <small class="text-muted">Data-driven diversity tracking</small>
                     </div>
                 </div>
             </div>

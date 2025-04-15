@@ -48,41 +48,114 @@
                 Your uploaded file must contain the following columns:
             </p>
             
-            <div class="row">
-                <div class="col-md-6">
-                    <ul class="list-group mb-3">
-                        <li class="list-group-item">Candidate ID</li>
-                        <li class="list-group-item">First Name</li>
-                        <li class="list-group-item">Surname</li>
-                        <li class="list-group-item">South African ID Number</li>
-                        <li class="list-group-item">Age</li>
-                        <li class="list-group-item">Email Address</li>
-                        <li class="list-group-item">Contact Numbers</li>
-                        <li class="list-group-item">Home Language</li>
-                    </ul>
+            <div class="accordion mb-4" id="requiredColumnsAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Required Columns with Accepted Variations
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#requiredColumnsAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-group mb-3">
+                                        <li class="list-group-item">
+                                            <strong>Candidate ID</strong>
+                                            <small class="d-block text-muted">Also accepts: CandidateID, ID, Candidate_ID, Applicant ID</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>First Name</strong>
+                                            <small class="d-block text-muted">Also accepts: FirstName, First_Name, Name, Given Name, First</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Surname</strong>
+                                            <small class="d-block text-muted">Also accepts: Last Name, LastName, Last_Name, Family Name</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>South African ID Number</strong>
+                                            <small class="d-block text-muted">Also accepts: SA ID Number, ID Number, SA_ID, National ID, Identity Number</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Age</strong>
+                                            <small class="d-block text-muted">Also accepts: Years</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Email Address</strong>
+                                            <small class="d-block text-muted">Also accepts: Email, E-mail, EmailAddress, Contact Email</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Contact Numbers</strong>
+                                            <small class="d-block text-muted">Also accepts: Phone, Mobile, Telephone, Contact Number, Phone Number, Cell Number</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Home Language</strong>
+                                            <small class="d-block text-muted">Also accepts: Language, Mother Tongue, First Language</small>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-group mb-3">
+                                        <li class="list-group-item">
+                                            <strong>Province and Suburb</strong>
+                                            <small class="d-block text-muted">Also accepts: Address, Location, Residence, Region, Province, Suburb</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Race</strong>
+                                            <small class="d-block text-muted">Also accepts: Ethnicity</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Gender</strong>
+                                            <small class="d-block text-muted">Also accepts: Sex</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Disability Status</strong>
+                                            <small class="d-block text-muted">Also accepts: Disability, PWD Status, PWD, Disabled</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Highest Qualification</strong>
+                                            <small class="d-block text-muted">Also accepts: Qualification, Education, Degree, Academic Qualification</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>NQF Level</strong>
+                                            <small class="d-block text-muted">Also accepts: NQF, Qualification Level, Education Level</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Qualification Field</strong>
+                                            <small class="d-block text-muted">Also accepts: Field of Study, Study Field, Discipline, Major</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Institution Name</strong>
+                                            <small class="d-block text-muted">Also accepts: Institution, University, College, School, Academy</small>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <ul class="list-group mb-3">
-                        <li class="list-group-item">Province and Suburb</li>
-                        <li class="list-group-item">Race</li>
-                        <li class="list-group-item">Gender</li>
-                        <li class="list-group-item">Disability Status</li>
-                        <li class="list-group-item">Highest Qualification</li>
-                        <li class="list-group-item">NQF Level</li>
-                        <li class="list-group-item">Qualification Field</li>
-                        <li class="list-group-item">Institution Name</li>
-                    </ul>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Optional Columns
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#requiredColumnsAccordion">
+                        <div class="accordion-body">
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <strong>Employment Status</strong>
+                                    <small class="d-block text-muted">Also accepts: Employment, Job Status, Working Status, Employed</small>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>If Disability Status is "Yes":</strong> Valid doctor's note, Nature of Disability
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <p class="card-text">
-                Optional columns:
-            </p>
-            
-            <ul class="list-group">
-                <li class="list-group-item">Employment Status</li>
-                <li class="list-group-item">If Disability Status is "Yes": Valid doctor's note, Nature of Disability</li>
-            </ul>
         </div>
     </div>
 </div>
