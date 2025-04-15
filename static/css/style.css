@@ -1,0 +1,116 @@
+/* Main Layout */
+body {
+    overflow-x: hidden;
+}
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding-top: 1rem;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.main-content {
+    min-height: 100vh;
+    padding-bottom: 2rem;
+}
+
+/* Dashboard Cards */
+.card {
+    transition: all 0.3s ease;
+    border-radius: 0.5rem;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Progress Bars */
+.progress {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+/* DataTables Customization */
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 1rem;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    border-radius: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid var(--bs-border-color);
+}
+
+/* Target Status Indicators */
+.target-indicator {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.target-met {
+    background-color: var(--bs-success);
+}
+
+.target-not-met {
+    background-color: var(--bs-danger);
+}
+
+/* Chart Containers */
+canvas {
+    max-width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .sidebar {
+        height: auto;
+        position: relative;
+    }
+    
+    .row > .mb-4 {
+        margin-bottom: 2rem !important;
+    }
+}
+
+/* Custom card status colors */
+.card-status-good {
+    border-color: var(--bs-success);
+}
+
+.card-status-warning {
+    border-color: var(--bs-warning);
+}
+
+.card-status-danger {
+    border-color: var(--bs-danger);
+}
+
+/* Form validation styling */
+.was-validated .form-control:invalid,
+.form-control.is-invalid {
+    border-color: var(--bs-danger);
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+/* Action buttons in tables */
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    margin-right: 5px;
+}

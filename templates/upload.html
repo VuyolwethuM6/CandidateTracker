@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="upload-page">
+    <h1 class="mb-4">Upload Program Data</h1>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-upload me-2"></i> Upload New Program
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('upload_program') }}" method="POST" enctype="multipart/form-data" id="uploadForm">
+                <div class="mb-3">
+                    <label for="program_name" class="form-label">Program Name</label>
+                    <input type="text" class="form-control" id="program_name" name="program_name" required 
+                           placeholder="Enter program name" pattern="[a-zA-Z0-9_\s]+"
+                           title="Program name can only contain letters, numbers, spaces, and underscores">
+                    <div class="form-text">
+                        Use a unique name for your program. If a program with this name already exists, it will be overwritten.
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="program_file" class="form-label">Program Data File</label>
+                    <input type="file" class="form-control" id="program_file" name="program_file" required accept=".csv,.xlsx">
+                    <div class="form-text">
+                        Upload a .csv or .xlsx file containing candidate data. The file must include all required columns.
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="uploadButton">
+                    <i class="fas fa-upload me-2"></i> Upload Program Data
+                </button>
+                
+                <div class="progress mt-3" style="height: 25px; display: none;" id="uploadProgress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-info-circle me-2"></i> Required Columns
+        </div>
+        <div class="card-body">
+            <p class="card-text">
+                Your uploaded file must contain the following columns:
+            </p>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item">Candidate ID</li>
+                        <li class="list-group-item">First Name</li>
+                        <li class="list-group-item">Surname</li>
+                        <li class="list-group-item">South African ID Number</li>
+                        <li class="list-group-item">Age</li>
+                        <li class="list-group-item">Email Address</li>
+                        <li class="list-group-item">Contact Numbers</li>
+                        <li class="list-group-item">Home Language</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item">Province and Suburb</li>
+                        <li class="list-group-item">Race</li>
+                        <li class="list-group-item">Gender</li>
+                        <li class="list-group-item">Disability Status</li>
+                        <li class="list-group-item">Highest Qualification</li>
+                        <li class="list-group-item">NQF Level</li>
+                        <li class="list-group-item">Qualification Field</li>
+                        <li class="list-group-item">Institution Name</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <p class="card-text">
+                Optional columns:
+            </p>
+            
+            <ul class="list-group">
+                <li class="list-group-item">Employment Status</li>
+                <li class="list-group-item">If Disability Status is "Yes": Valid doctor's note, Nature of Disability</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+{% endblock %}
