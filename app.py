@@ -18,29 +18,32 @@ DATA_DIR = './data'
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
 
-# Define required columns for uploaded files with possible variations
+# Define columns for uploaded files with possible variations
+# Some columns are required, others are now optional for testing
 REQUIRED_COLUMNS = {
     'Candidate ID': ['Candidate ID', 'CandidateID', 'ID', 'Candidate_ID', 'Applicant ID'],
     'First Name': ['First Name', 'FirstName', 'First_Name', 'Name', 'Given Name', 'First'], 
     'Surname': ['Surname', 'Last Name', 'LastName', 'Last_Name', 'Family Name'],
-    'South African ID Number': ['South African ID Number', 'SA ID Number', 'ID Number', 'SA_ID', 'National ID', 'Identity Number'],
-    'Age': ['Age', 'Years'],
+    'South African ID Number': ['South African ID Number', 'SA ID Number', 'ID Number', 'SA_ID', 'National ID', 'Identity Number', 'Please enter your S.A Identity Number'],
+    'Age': ['Age', 'Years', 'What is your age?'],
     'Email Address': ['Email Address', 'Email', 'E-mail', 'EmailAddress', 'Contact Email'],
-    'Contact Numbers': ['Contact Numbers', 'Phone', 'Mobile', 'Telephone', 'Contact Number', 'Phone Number', 'Cell Number'],
-    'Home Language': ['Home Language', 'Language', 'Mother Tongue', 'First Language'],
-    'Province and Suburb': ['Province and Suburb', 'Address', 'Location', 'Residence', 'Region', 'Province', 'Suburb'],
-    'Race': ['Race', 'Ethnicity'],
-    'Gender': ['Gender', 'Sex'],
-    'Disability Status': ['Disability Status', 'Disability', 'PWD Status', 'PWD', 'Disabled'],
-    'Highest Qualification': ['Highest Qualification', 'Qualification', 'Education', 'Degree', 'Academic Qualification'],
-    'NQF Level': ['NQF Level', 'NQF', 'Qualification Level', 'Education Level'],
-    'Qualification Field': ['Qualification Field', 'Field of Study', 'Study Field', 'Discipline', 'Major'],
-    'Institution Name': ['Institution Name', 'Institution', 'University', 'College', 'School', 'Academy']
+    'Gender': ['Gender', 'Sex', 'What gender group do you belong to?'],
+    'Race': ['Race', 'Ethnicity', 'Which racial group do you belong to?']
 }
 
-# Optional columns with variations
+# Make these columns optional for now
 OPTIONAL_COLUMNS = {
-    'Employment Status': ['Employment Status', 'Employment', 'Job Status', 'Working Status', 'Employed']
+    'Contact Numbers': ['Contact Numbers', 'Phone', 'Mobile', 'Telephone', 'Contact Number', 'Phone Number', 'Cell Number', 'Primary Contact Number', 'Alternative Contact Number'],
+    'Home Language': ['Home Language', 'Language', 'Mother Tongue', 'First Language', 'What is your home language?'],
+    'Province and Suburb': ['Province and Suburb', 'Address', 'Location', 'Residence', 'Region', 'Province', 'Suburb', 'Which province are you currently living in?', 'Which suburb are you currently living in?'],
+    'Disability Status': ['Disability Status', 'Disability', 'PWD Status', 'PWD', 'Disabled', 'Do you have a disability?'],
+    'Highest Qualification': ['Highest Qualification', 'Qualification', 'Education', 'Degree', 'Academic Qualification', 'What is your Highest completed qualification?', 'What was the qualification name?'],
+    'NQF Level': ['NQF Level', 'NQF', 'Qualification Level', 'Education Level'], 
+    'Qualification Field': ['Qualification Field', 'Field of Study', 'Study Field', 'Discipline', 'Major', 'What was the qualification field of study?'],
+    'Institution Name': ['Institution Name', 'Institution', 'University', 'College', 'School', 'Academy'],
+    'Employment Status': ['Employment Status', 'Employment', 'Job Status', 'Working Status', 'Employed'],
+    'Disability Details': ['If Yes, do you have a valid doctors note to confirm your disability?', 'What is the nature of your disability?'],
+    'Other Training': ['What other upskilling programmes have you completed?']
 }
 
 # Define target metrics
@@ -188,8 +191,18 @@ def get_programs():
                 
                 # Calculate metrics
                 total_candidates = len(df)
-                female_count = len(df[df['Gender'].str.lower() == 'female'])
-                pwd_count = len(df[df['Disability Status'].str.lower() == 'yes'])
+                
+                # Calculate female candidates with fallback
+                if 'Gender' in df.columns:
+                    female_count = len(df[df['Gender'].str.lower().str.contains('female', na=False)])
+                else:
+                    female_count = 0
+                
+                # Calculate PWD candidates with fallback
+                if 'Disability Status' in df.columns:
+                    pwd_count = len(df[df['Disability Status'].str.lower().str.contains('yes|y', na=False, regex=True)])
+                else:
+                    pwd_count = 0
                 
                 female_percent = (female_count / total_candidates * 100) if total_candidates > 0 else 0
                 pwd_percent = (pwd_count / total_candidates * 100) if total_candidates > 0 else 0
@@ -309,10 +322,23 @@ def get_dashboard_metrics():
             
             # Calculate metrics
             metrics['total_candidates'] = len(all_df)
-            metrics['female_count'] = len(all_df[all_df['Gender'].str.lower() == 'female'])
-            metrics['male_count'] = len(all_df[all_df['Gender'].str.lower() == 'male'])
-            metrics['pwd_count'] = len(all_df[all_df['Disability Status'].str.lower() == 'yes'])
             
+            # Handle Gender metrics
+            if 'Gender' in all_df.columns:
+                # Apply a case-insensitive filter to handle variations in 'female'
+                metrics['female_count'] = len(all_df[all_df['Gender'].str.lower().str.contains('female', na=False)])
+                metrics['male_count'] = len(all_df[all_df['Gender'].str.lower().str.contains('male', na=False)])
+            else:
+                metrics['female_count'] = 0
+                metrics['male_count'] = 0
+            
+            # Handle Disability Status metrics with graceful fallbacks
+            if 'Disability Status' in all_df.columns:
+                # Look for "yes" or "y" in disability status
+                metrics['pwd_count'] = len(all_df[all_df['Disability Status'].str.lower().str.contains('yes|y', na=False, regex=True)])
+            else:
+                metrics['pwd_count'] = 0
+                
             # Calculate female and PWD percentages
             metrics['female_percent'] = round((metrics['female_count'] / metrics['total_candidates'] * 100), 2) if metrics['total_candidates'] > 0 else 0
             metrics['pwd_percent'] = round((metrics['pwd_count'] / metrics['total_candidates'] * 100), 2) if metrics['total_candidates'] > 0 else 0
@@ -329,13 +355,19 @@ def get_dashboard_metrics():
             program_counts = all_df['Program'].value_counts().to_dict()
             metrics['program_counts'] = program_counts
             
-            # Count candidates by institution
-            institution_counts = all_df['Institution Name'].value_counts().to_dict()
-            metrics['institution_counts'] = {k: v for k, v in sorted(institution_counts.items(), key=lambda item: item[1], reverse=True)[:10]}
+            # Count candidates by institution (if the column exists)
+            if 'Institution Name' in all_df.columns:
+                institution_counts = all_df['Institution Name'].value_counts().to_dict()
+                metrics['institution_counts'] = {k: v for k, v in sorted(institution_counts.items(), key=lambda item: item[1], reverse=True)[:10]}
+            else:
+                metrics['institution_counts'] = {"Unknown": metrics['total_candidates']}
             
-            # Count candidates by NQF level
-            nqf_level_counts = all_df['NQF Level'].value_counts().to_dict()
-            metrics['nqf_level_counts'] = nqf_level_counts
+            # Count candidates by NQF level (if the column exists)
+            if 'NQF Level' in all_df.columns:
+                nqf_level_counts = all_df['NQF Level'].value_counts().to_dict()
+                metrics['nqf_level_counts'] = nqf_level_counts
+            else:
+                metrics['nqf_level_counts'] = {"Unknown": metrics['total_candidates']}
         
         return jsonify(metrics)
     
@@ -362,11 +394,27 @@ def delete_candidate():
         # Read the CSV file
         df = pd.read_csv(file_path)
         
-        # Find and remove the candidate
-        df_filtered = df[df['Candidate ID'] != candidate_id]
-        
-        if len(df) == len(df_filtered):
-            return jsonify({'error': 'Candidate not found in program'}), 404
+        # Find and remove the candidate - check if Candidate ID column exists
+        if 'Candidate ID' in df.columns:
+            df_filtered = df[df['Candidate ID'] != candidate_id]
+            
+            if len(df) == len(df_filtered):
+                return jsonify({'error': 'Candidate not found in program'}), 404
+        else:
+            # Try to find a matching column that might be the candidate ID
+            id_column = None
+            for col in df.columns:
+                if "id" in col.lower() or "candidate" in col.lower():
+                    id_column = col
+                    break
+            
+            if id_column:
+                df_filtered = df[df[id_column] != candidate_id]
+                
+                if len(df) == len(df_filtered):
+                    return jsonify({'error': 'Candidate not found in program'}), 404
+            else:
+                return jsonify({'error': 'Candidate ID column not found in file'}), 400
         
         # Save the updated CSV
         df_filtered.to_csv(file_path, index=False)
