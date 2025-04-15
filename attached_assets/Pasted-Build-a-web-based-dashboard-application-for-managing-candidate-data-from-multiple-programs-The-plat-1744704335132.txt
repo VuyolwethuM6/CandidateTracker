@@ -1,0 +1,231 @@
+Build a web-based dashboard application for managing candidate data from multiple programs. The platform should allow users to upload .csv or .xlsx files for each program and automatically categorize, store, analyze, and display candidate diversity metrics. The dashboard should support tracking progress towards a total candidate goal (e.g., 610 candidates) and include real-time visual feedback on gender and disability (PWD) diversity targets.
+
+🔧 Tech Stack Requirements
+Frontend:
+
+HTML, CSS, and JavaScript
+
+Use Bootstrap for styling (optional)
+
+Use Chart.js or Plotly.js for data visualizations
+
+A sidebar navigation layout with tabs
+
+Backend:
+
+Python using Flask
+
+Use pandas for reading and processing .csv and .xlsx files
+
+File upload handling using Flask's request.files
+
+Store uploaded program data as .csv files in a ./data/ folder (no database)
+
+📂 Platform Structure
+Left Sidebar Navigation Tabs:
+Home (dashboard)
+
+Upload
+
+Programs
+
+Manage Candidates
+
+(allow future expansion with more tabs)
+
+📁 Upload Tab Functionality
+User is presented with:
+
+A text input field labeled "Program Name"
+
+A file upload field accepting .csv and .xlsx files
+
+A submit button labeled "Upload Program Data"
+
+When the file is uploaded:
+
+The system reads the file using pandas
+
+If .csv: use pandas.read_csv()
+
+If .xlsx: use pandas.read_excel()
+
+The file is validated (must include all required candidate fields)
+
+Data is stored as ./data/ProgramName.csv
+
+If a file already exists with the same program name, it should be overwritten
+
+✅ Required Columns in Upload File
+Candidate ID
+
+First Name
+
+Surname
+
+South African ID Number
+
+Age
+
+Email Address
+
+Contact Numbers
+
+Home Language
+
+Province and Suburb
+
+Race
+
+Gender
+
+Disability Status (Yes/No)
+
+If Yes: Valid doctor’s note, Nature of Disability
+
+Highest Qualification
+
+NQF Level
+
+Qualification Field
+
+Institution Name
+
+Employment Status (optional but useful)
+
+🏠 Home Dashboard Functionality
+Display metrics as visual cards at the top, such as:
+
+Total Candidates:
+
+X / 610 (dynamically count all candidates across all uploaded program files)
+
+Female Candidates:
+
+X / Total
+
+Show percentage vs target (70%)
+
+Color the card red if below target
+
+PWD Candidates (People With Disabilities):
+
+X / Total
+
+Show percentage vs target (5%)
+
+Flag if target not met
+
+Male Candidates:
+
+Show count and optionally include breakdown by qualification
+
+📊 Charts and Visuals Below the Cards
+Pie Chart – Gender Diversity (Female vs Male)
+
+Pie Chart – PWD Status (PWD vs Non-PWD)
+
+Bar Chart – Candidates by Program
+
+Bar Chart – Candidates by Institution
+
+(Optional): Chart for NQF level distribution
+
+All charts update in real-time as more data is uploaded.
+
+📂 Programs Tab
+Show a list of all uploaded programs
+
+Program name
+
+Number of candidates
+
+Female % and PWD %
+
+Allow clicking into each program to view candidates in that program
+
+👤 Manage Candidates Tab
+Show a searchable table of all candidates across all programs
+
+Display key fields:
+
+Name, ID, Gender, PWD, Program, Qualification, NQF Level
+
+Allow actions per candidate:
+
+Delete
+
+(Optional) Edit fields
+
+(Optional) Move candidate to another program
+
+🧮 Business Logic Rules (Optional for Later Enhancements)
+These rules can be added during shortlisting or advanced filtering:
+
+Eligibility Rules:
+
+Must be South African
+
+Age 18–34
+
+Minimum NQF Level 4
+
+Male candidates must have NQF 7+, unless they are PWD
+
+Incomplete applications (missing ID or academic docs) are flagged
+
+Diversity Goals:
+
+70% Female
+
+5% PWD
+
+If targets are not met, show a warning or flag
+
+💾 Data Storage Requirements
+Store all uploaded files in /data/ folder
+
+Filename format: ProgramName.csv
+
+When dashboard loads:
+
+Read all files in /data/
+
+Concatenate into one full DataFrame
+
+Calculate totals and diversity metrics
+
+🔐 Security (Basic)
+Allow only .csv and .xlsx file types
+
+Limit upload size
+
+Sanitize file and program names
+
+✨ Optional Future Features
+User login
+
+Program-based user roles
+
+Export filtered candidate lists
+
+Custom shortlisting based on rules
+
+PDF report generation
+
+Interactive maps by province
+
+🔚 Deliverables
+A Flask-based web app with:
+
+A running frontend
+
+Navigation sidebar
+
+Fully working Upload tab
+
+Home dashboard with cards and charts
+
+Candidate management and per-program breakdown
+
+All data handled through uploaded files, no external database
