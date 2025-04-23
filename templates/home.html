@@ -3,7 +3,7 @@
 {% block content %}
 <div class="home-dashboard">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">Dashboard</h1>
+        <!-- <h1 class="mb-0">Dashboard</h1> -->
         <a href="{{ url_for('upload') }}" class="btn btn-primary">
             <i class="fas fa-upload me-2"></i> Upload New Data
         </a>
@@ -32,7 +32,7 @@
                         <div class="progress mb-3" style="height: 10px; border-radius: 5px;">
                             <div id="total-progress" class="progress-bar progress-bar-striped" role="progressbar" style="width: 0%"></div>
                         </div>
-                        <h2 class="display-5 fw-bold mb-0"><span id="total-count">0</span> / <span id="total-target">610</span></h2>
+                        <h2 class="display-5 fw-bold mb-0"><span id="total-count">0</span> / <span id="total-target">600</span></h2>
                         <p class="text-muted"><span id="total-percent">0%</span> of target</p>
                     </div>
                 </div>
@@ -50,7 +50,7 @@
                             <div id="female-progress" class="progress-bar progress-bar-striped" role="progressbar" style="width: 0%"></div>
                         </div>
                         <h2 class="display-5 fw-bold mb-0"><span id="female-count">0</span> / <span id="total-for-female">0</span></h2>
-                        <p class="text-muted"><span id="female-percent">0%</span> <span class="badge bg-info ms-1">Target: 70%</span></p>
+                        <p class="text-muted"><span id="female-percent">0%</span> <span class="badge bg-info ms-1">Target: 65%</span></p>
                     </div>
                 </div>
             </div>
@@ -97,6 +97,19 @@
                     </div>
                     <div class="card-body">
                         <canvas id="pwdChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Race Distribution Chart -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Race Distribution</h5>
+                        <i class="fas fa-users-cog text-info"></i>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="raceChart"></canvas>
                     </div>
                 </div>
             </div>

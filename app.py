@@ -47,9 +47,9 @@ OPTIONAL_COLUMNS = {
 }
 
 # Define target metrics
-TOTAL_TARGET = 610
-FEMALE_TARGET_PERCENT = 70
-PWD_TARGET_PERCENT = 5
+TOTAL_TARGET = 600  # 600 total candidates target
+FEMALE_TARGET_PERCENT = 65  # 65% female target
+PWD_TARGET_PERCENT = 5     # 5% PWD target
 
 def check_logo_exists():
     """Check if a custom logo image exists."""
@@ -297,7 +297,8 @@ def get_dashboard_metrics():
             'pwd_count': 0,
             'program_counts': {},
             'institution_counts': {},
-            'nqf_level_counts': {}
+            'nqf_level_counts': {},
+            'race_counts': {}
         }
         
         # List all CSV files in the data directory
@@ -373,6 +374,13 @@ def get_dashboard_metrics():
                 metrics['nqf_level_counts'] = nqf_level_counts
             else:
                 metrics['nqf_level_counts'] = {"Unknown": metrics['total_candidates']}
+                
+            # Count candidates by race (if the column exists)
+            if 'Race' in all_df.columns:
+                race_counts = all_df['Race'].value_counts().to_dict()
+                metrics['race_counts'] = race_counts
+            else:
+                metrics['race_counts'] = {"Unknown": metrics['total_candidates']}
         
         return jsonify(metrics)
     

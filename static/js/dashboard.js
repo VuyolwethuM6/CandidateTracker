@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Chart instances
-let genderChart, pwdChart, programChart, institutionChart;
+let genderChart, pwdChart, raceChart, programChart, institutionChart;
 
 /**
  * Load dashboard data from API
@@ -51,7 +51,7 @@ function loadDashboardData() {
  * Update metrics cards with data
  */
 function updateMetricsCards(data) {
-    const totalTarget = 610;
+    const totalTarget = 600;
     
     // Total candidates card
     document.getElementById('total-count').textContent = data.total_candidates;
@@ -71,7 +71,7 @@ function updateMetricsCards(data) {
     femaleProgress.style.width = `${data.female_percent}%`;
     
     const femaleCard = document.getElementById('female-card');
-    if (data.female_percent >= 70) {
+    if (data.female_percent >= 65) {
         femaleCard.className = 'card h-100 card-status-good';
         femaleProgress.className = 'progress-bar progress-bar-striped bg-success';
     } else if (data.female_percent >= 60) {
@@ -109,8 +109,85 @@ function updateMetricsCards(data) {
 function updateCharts(data) {
     updateGenderChart(data);
     updatePwdChart(data);
+    updateRaceChart(data);
     updateProgramChart(data);
     updateInstitutionChart(data);
+}
+
+/**
+ * Update race distribution chart
+ */
+function updateRaceChart(data) {
+    const ctx = document.getElementById('raceChart').getContext('2d');
+    
+    // Get race data
+    const races = data.race_counts || {};
+    const raceLabels = Object.keys(races);
+    const raceCounts = Object.values(races);
+    
+    // Define a color palette for race pie chart
+    const backgroundColors = [
+        'rgba(255, 99, 132, 0.7)',
+        'rgba(54, 162, 235, 0.7)',
+        'rgba(255, 206, 86, 0.7)',
+        'rgba(75, 192, 192, 0.7)',
+        'rgba(153, 102, 255, 0.7)',
+        'rgba(255, 159, 64, 0.7)',
+        'rgba(199, 199, 199, 0.7)'
+    ];
+    
+    const borderColors = [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)',
+        'rgba(199, 199, 199, 1)'
+    ];
+    
+    // Create background and border color arrays matching the number of race categories
+    const bgColors = raceLabels.map((_, i) => backgroundColors[i % backgroundColors.length]);
+    const bdColors = raceLabels.map((_, i) => borderColors[i % borderColors.length]);
+    
+    const chartData = {
+        labels: raceLabels,
+        datasets: [{
+            data: raceCounts,
+            backgroundColor: bgColors,
+            borderColor: bdColors,
+            borderWidth: 1
+        }]
+    };
+    
+    if (raceChart) {
+        raceChart.data = chartData;
+        raceChart.update();
+    } else {
+        raceChart = new Chart(ctx, {
+            type: 'pie',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.raw;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${context.label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
 }
 
 /**
@@ -118,11 +195,12 @@ function updateCharts(data) {
  */
 function updateGenderChart(data) {
     const ctx = document.getElementById('genderChart').getContext('2d');
+    console.log(data.male_count - data.female_count);
     
     const chartData = {
         labels: ['Female', 'Male'],
         datasets: [{
-            data: [data.female_count, data.male_count],
+            data: [data.female_count, data.male_count - data.female_count],
             backgroundColor: ['rgba(255, 99, 132, 0.7)', 'rgba(54, 162, 235, 0.7)'],
             borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)'],
             borderWidth: 1
