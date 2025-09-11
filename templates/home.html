@@ -8,7 +8,7 @@
             <i class="fas fa-upload me-2"></i> Upload New Data
         </a>
     </div>
-    
+
     <!-- Loading Spinner -->
     <div id="dashboard-loading" class="text-center py-5">
         <div class="spinner-border text-primary" role="status">
@@ -16,7 +16,7 @@
         </div>
         <p class="mt-2">Loading dashboard data...</p>
     </div>
-    
+
     <!-- Dashboard Content (Hidden until loaded) -->
     <div id="dashboard-content" style="display: none;">
         <!-- Metrics Cards -->
@@ -37,7 +37,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Female Candidates Card -->
             <div class="col-md-4 mb-3">
                 <div class="card h-100 shadow-sm" id="female-card">
@@ -54,7 +54,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- PWD Candidates Card -->
             <div class="col-md-4 mb-3">
                 <div class="card h-100 shadow-sm" id="pwd-card">
@@ -72,10 +72,26 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Charts Section -->
+
+        <!-- Race Targets Section -->
         <div class="row mb-4">
-            <!-- Gender Distribution Chart -->
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-transparent border-0">
+                        <h5 class="mb-0">Race-Gender Targets Progress</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" id="race-targets-container">
+                            <!-- Race target cards will be populated here by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+<!--
+        <!-- Charts Section 
+        <div class="row mb-4">
+            <!-- Gender Distribution Chart 
             <div class="col-md-6 mb-4">
                 <div class="card h-100 shadow-sm">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
@@ -87,8 +103,8 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- PWD Status Chart -->
+
+            <!-- PWD Status Chart 
             <div class="col-md-6 mb-4">
                 <div class="card h-100 shadow-sm">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
@@ -100,8 +116,8 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Race Distribution Chart -->
+
+            <!-- Race Distribution Chart 
             <div class="col-md-6 mb-4">
                 <div class="card h-100 shadow-sm">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
@@ -113,8 +129,8 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Candidates By Program Chart -->
+
+            <!-- Candidates By Program Chart 
             <div class="col-md-6 mb-4">
                 <div class="card h-100 shadow-sm">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
@@ -126,8 +142,8 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Candidates by Institution Chart -->
+
+            <!-- Candidates by Institution Chart 
             <div class="col-md-6 mb-4">
                 <div class="card h-100 shadow-sm">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
@@ -140,14 +156,14 @@
                 </div>
             </div>
         </div>
-        
+-->
         <!-- No Data Message (Hidden by default) -->
-        <div id="no-data-message" class="text-center py-5" style="display: none;">
-            <div class="alert alert-info shadow-sm">
+        <div id="no-data-message" class="text-center py-5" >
+            <div class="alert alert-info shadow-sm" style="display: none;">
                 <i class="fas fa-info-circle me-2"></i>
                 No candidate data available. Please upload program data via the Upload tab.
             </div>
-            <a href="{{ url_for('upload') }}" class="btn btn-primary mt-3">
+            <a href="{{ url_for('upload') }}" class="btn btn-primary mt-3" style="display: none;">
                 <i class="fas fa-upload me-2"></i> Upload Program Data
             </a>
         </div>

@@ -1,0 +1,88 @@
+# CandidateTracker Dashboard Mockup (with Race-Gender Targets)
+
+```
++------------------------------------------------------+
+|                  CANDIDATE TRACKER                   |
++------------------------------------------------------+
+| Dashboard | Upload Data | Programs | Manage Candidates|
++------------------------------------------------------+
+
++------------------------------------------------------+
+|                   METRICS CARDS                      |
++------------------------------------------------------+
+| TOTAL CANDIDATES  | FEMALE CANDIDATES | PWD CANDIDATES|
+|   245 / 600       |   159 / 245       |   12 / 245    |
+|    40.8%          |    65.0%          |    4.9%       |
+| [====          ]  | [==========]      | [=====        ]|
++------------------------------------------------------+
+
++------------------------------------------------------+
+|               RACE TARGETS PROGRESS                  |
++------------------------------------------------------+
+| African Male     | African Female   | Coloured Male  |
+|  95 / 230        |  150 / 435       |   15 / 32      |
+|   41.3%          |   34.5%          |    46.9%       |
+| [====        ]   | [===         ]   | [=====      ]  |
++------------------------------------------------------+
+| Coloured Female  | Indian Male      | Indian Female  |
+|  25 / 61         |   5 / 15         |   10 / 27      |
+|   41.0%          |   33.3%          |    37.0%       |
+| [====        ]   | [===         ]   | [====       ]  |
++------------------------------------------------------+
+
++----------------------+  +----------------------+
+|  GENDER DISTRIBUTION |  |    PWD STATUS        |
+|                      |  |                      |
+|       [PIE CHART]    |  |     [PIE CHART]      |
+|                      |  |                      |
+|  Female: 65%         |  |  PWD: 4.9%           |
+|  Male: 35%           |  |  Non-PWD: 95.1%      |
++----------------------+  +----------------------+
+
++----------------------+  +----------------------+
+|  RACE DISTRIBUTION   |  | CANDIDATES BY PROGRAM|
+|                      |  |                      |
+|    [STACKED BAR]     |  |     [BAR CHART]      |
+|                      |  |                      |
+| African   ████████   |  | Program A: ████      |
+| Coloured  ███        |  | Program B: ██████    |
+| Indian    █          |  | Program C: ███       |
+|                      |  |                      |
++----------------------+  +----------------------+
+
++------------------------------------------------------+
+|                 TOP INSTITUTIONS                     |
+|                                                      |
+|                    [BAR CHART]                       |
+|                                                      |
+| University A: ████████                               |
+| University B: ██████                                 |
+| College C:    ████                                   |
+|                                                      |
++------------------------------------------------------+
+```
+
+## Key Features of the Race Targets Section:
+
+1. **Individual Cards for Each Race-Gender Combination**
+   - Each card shows the target demographic (e.g., "African Female")
+   - Displays current count vs. target (e.g., "150 / 435")
+   - Shows progress percentage (e.g., "34.5%")
+   - Progress bar is color-coded:
+     - Red: < 75% of target
+     - Yellow: 75-99% of target
+     - Green: ≥ 100% of target
+
+2. **Enhanced Race Distribution Chart**
+   - Changed from pie chart to stacked bar chart
+   - Each bar represents a race category
+   - Bars are stacked to show gender breakdown
+   - Female segments shown in pink
+   - Male segments shown in blue
+
+3. **Responsive Layout**
+   - Cards arranged in rows of 3 on large screens
+   - Adapts to fewer columns on smaller screens
+   - Maintains consistent styling with other dashboard elements
+
+This mockup shows how the race-gender targets integrate seamlessly with the existing dashboard design while providing valuable additional information for diversity tracking.

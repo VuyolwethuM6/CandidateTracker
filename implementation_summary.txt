@@ -1,0 +1,69 @@
+# Race-Gender Specific Targets Implementation Summary
+
+## Overview
+We've enhanced the CandidateTracker application to track and display race-gender specific targets. This implementation allows monitoring progress against specific targets for different race and gender combinations, such as African Male, African Female, Coloured Male, etc.
+
+## Changes Made
+
+### 1. Backend Changes (app.py)
+- Added race-gender specific targets definition:
+```python
+RACE_TARGETS = {
+    'African Male': 230,
+    'African Female': 435,
+    'Coloured Male': 32,
+    'Coloured Female': 61,
+    'Indian Male': 15,
+    'Indian Female': 27
+}
+```
+
+- Enhanced the `get_dashboard_metrics` function to:
+  - Create a combined Race_Gender field from Race and Gender columns
+  - Calculate counts for each race-gender combination
+  - Calculate progress percentages against the defined targets
+  - Return this data in the API response
+
+### 2. Frontend Changes (home.html)
+- Added a new "Race Targets Progress" section to the dashboard:
+```html
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0">Race Targets Progress</h5>
+            </div>
+            <div class="card-body">
+                <div class="row" id="race-targets-container">
+                    <!-- Race target cards will be populated here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+```
+
+### 3. JavaScript Changes (dashboard.js)
+- Added a new `updateRaceTargets` function to create and display cards for each race-gender target:
+  - Shows the target value
+  - Shows current count
+  - Displays progress percentage
+  - Color-codes progress bars (red, yellow, green)
+
+- Enhanced the `updateRaceChart` function to:
+  - Check if race-gender data is available
+  - Fall back to the original pie chart if detailed data is not available
+  - Create a stacked bar chart showing gender breakdown within each race
+  - Use different colors for male and female segments
+
+## Benefits
+- More detailed diversity tracking
+- Visual representation of progress against specific race-gender targets
+- Better insights into the demographic composition of candidates
+- Ability to identify specific areas that need improvement
+
+## Future Enhancements
+- Add filtering capabilities to view race-gender data by program
+- Implement trend analysis to track changes over time
+- Add export functionality for race-gender specific reports
+- Create dedicated page for detailed diversity analytics

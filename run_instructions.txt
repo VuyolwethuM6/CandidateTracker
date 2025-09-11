@@ -1,0 +1,28 @@
+To run the CandidateTracker application and see the race-gender specific targets:
+
+1. Open a command prompt or terminal
+2. Navigate to the project directory:
+   cd C:\Users\Vuyo\Downloads\CandidateTracker\CandidateTracker
+
+3. Run the Flask application:
+   python main.py
+
+4. Open a web browser and go to:
+   http://localhost:5000
+
+5. You should see the dashboard with:
+   - The original metrics cards (Total Candidates, Female Candidates, PWD Candidates)
+   - A new "Race Targets Progress" section showing cards for each race-gender combination
+   - Each card shows the current count, target, and progress percentage
+   - The Race Distribution chart now shows a stacked bar chart with gender breakdown by race
+
+The implementation includes:
+- Race-gender specific targets defined in app.py
+- Backend logic to calculate progress against these targets
+- Frontend components to display the targets and progress
+- Enhanced race chart showing gender breakdown within each race category
+
+If you encounter any issues:
+- Make sure all required packages are installed (flask, pandas, numpy)
+- Check the console for any error messages
+- Verify that there is data in the data directory
