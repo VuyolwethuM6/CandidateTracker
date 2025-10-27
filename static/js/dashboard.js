@@ -68,7 +68,7 @@ function updateProgramsEnrolled(data) {
  * Update metrics cards with data
  */
 function updateMetricsCards(data) {
-    const totalTarget = 620;
+    const totalTarget = 610;
 
     // Total candidates card
     document.getElementById('total-count').textContent = data.total_candidates;

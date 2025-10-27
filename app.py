@@ -44,7 +44,7 @@ OPTIONAL_COLUMNS = {
 }
 
 # Define target metrics
-TOTAL_TARGET = 620  # 620 total candidates target
+TOTAL_TARGET = 610  # 620 total candidates target
 FEMALE_TARGET_PERCENT = 65  # 65% female target
 PWD_TARGET_PERCENT = 5     # 5% PWD target
 
