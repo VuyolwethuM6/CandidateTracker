@@ -33,6 +33,9 @@ function loadDashboardData() {
                 document.getElementById('no-data-message').style.display = 'none';
             }
 
+            // Update programs enrolled counter
+            updateProgramsEnrolled(data);
+
             // Update metrics
             updateMetricsCards(data);
 
@@ -48,10 +51,24 @@ function loadDashboardData() {
 }
 
 /**
+ * Update programs enrolled counter
+ */
+function updateProgramsEnrolled(data) {
+    // Count unique programs from program_counts
+    const programsCount = data.program_counts ? Object.keys(data.program_counts).length : 0;
+    
+    // Update the counter in the UI
+    const programsCounter = document.getElementById('programs-enrolled-count');
+    if (programsCounter) {
+        programsCounter.textContent = programsCount;
+    }
+}
+
+/**
  * Update metrics cards with data
  */
 function updateMetricsCards(data) {
-    const totalTarget = 600;
+    const totalTarget = 620;
 
     // Total candidates card
     document.getElementById('total-count').textContent = data.total_candidates;
