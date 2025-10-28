@@ -270,3 +270,39 @@ canvas {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--bs-primary);
 }
+
+/* Modal visual improvements: border, softer background and blur backdrop */
+.modal-content {
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    background-clip: padding-box;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+}
+
+/* Slightly larger modal header */
+.modal-header {
+    border-bottom: none;
+    padding: 1rem 1.25rem;
+}
+
+.modal-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+/* Blur the background via the backdrop element when modal is visible */
+.modal-backdrop.show {
+    backdrop-filter: blur(6px) saturate(120%);
+    background-color: rgba(0,0,0,0.45) !important;
+}
+
+/* Modal table aesthetics */
+#raceCandidatesTable {
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.02);
+}
+
+#raceCandidatesTable tbody tr td {
+    vertical-align: middle;
+}

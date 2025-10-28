@@ -489,9 +489,111 @@ function updateRaceTargets(data) {
                 </div>
             </div>
         `;
+        // Make the card clickable to show candidate list for that race-gender
+        card.style.cursor = 'pointer';
+        card.title = 'Click to view candidates';
+        // Pre-parse the key into race and gender so we always send two separate params
+        (function(cardEl, keyStr){
+            const parts = keyStr.trim().split(/\s+/);
+            const genderPart = parts.slice(-1)[0] || '';
+            const racePart = parts.slice(0, -1).join(' ') || '';
+            cardEl.addEventListener('click', function() {
+                // Only proceed if we have both race and gender parsed
+                if (!racePart || !genderPart) {
+                    console.warn('Could not parse race/gender from key:', keyStr);
+                    showRaceGenderCandidates(keyStr); // fallback
+                    return;
+                }
+                showRaceGenderCandidates(racePart, genderPart, keyStr);
+            });
+        })(card, key);
 
         container.appendChild(card);
     });
+}
+
+// Keep a reference to the DataTable instance for the modal table
+let raceCandidatesDataTable = null;
+
+/**
+ * Show modal with candidates for a given race-gender target key (e.g. 'African Female')
+ */
+async function showRaceGenderCandidates(raceParam, genderParam, displayLabel) {
+    // Accept either two args (race, gender) and optional displayLabel, or fallback to a single label string
+    let race = raceParam;
+    let gender = genderParam;
+    let label = displayLabel || `${raceParam} ${genderParam}`;
+
+    // If called with one string (legacy), try to split it
+    if (typeof gender === 'undefined' && typeof race === 'string') {
+        const parts = race.trim().split(/\s+/);
+        gender = parts.slice(-1)[0];
+        race = parts.slice(0, -1).join(' ');
+        label = `${race} ${gender}`;
+    }
+
+    const modalLabel = document.getElementById('raceCandidatesModalLabel');
+    const modalEl = document.getElementById('raceCandidatesModal');
+    const modal = new bootstrap.Modal(modalEl);
+
+    modalLabel.textContent = `${label} — Loading...`;
+    modal.show();
+
+    try {
+        // Fetch filtered candidates from server (paginated). Increase per_page as needed.
+        const perPage = 1000;
+        const raceTrim = (race || '').trim();
+        const genderTrim = (gender || '').trim();
+        const url = `/api/candidates/filter?race=${encodeURIComponent(raceTrim)}&gender=${encodeURIComponent(genderTrim)}&page=1&per_page=${perPage}`;
+    // Fetching candidates for the requested race/gender
+
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error('Network response was not ok');
+        const payload = await resp.json();
+
+        const candidates = payload.candidates || [];
+
+        // Populate table body
+        const tbody = document.getElementById('raceCandidatesTableBody');
+        tbody.innerHTML = '';
+
+        candidates.forEach(candidate => {
+            const id = candidate['Candidate ID'] || '';
+            const name = `${candidate['First Name'] || ''} ${candidate['Surname'] || ''}`.trim();
+            const genderVal = candidate['Gender'] || '';
+            const pwd = candidate['Disability Status'] || '';
+            const program = candidate['Program'] || '';
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${id}</td>
+                <td>${name}</td>
+                <td>${genderVal}</td>
+                <td>${pwd}</td>
+                <td>${program}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Update modal title with count
+        modalLabel.textContent = `${label} — ${payload.total || candidates.length} candidate(s)`;
+
+        // Initialize or reinitialize DataTable on the modal table
+        if ($.fn.DataTable.isDataTable('#raceCandidatesTable')) {
+            $('#raceCandidatesTable').DataTable().destroy();
+        }
+
+        raceCandidatesDataTable = $('#raceCandidatesTable').DataTable({
+            responsive: true,
+            language: { search: "Search candidates:", emptyTable: "No candidates" }
+        });
+
+    } catch (err) {
+        console.error('Error loading race/gender candidates:', err);
+        modalLabel.textContent = `${label} — Error`;
+        const tbody = document.getElementById('raceCandidatesTableBody');
+        tbody.innerHTML = `<tr><td colspan="5">Error loading candidates. Check console for details.</td></tr>`;
+    }
 }
 
 /**
@@ -556,3 +658,30 @@ function updateInstitutionChart(data) {
         });
     }
 }
+
+// Clean up modal state when it's closed so subsequent opens show fresh results
+document.addEventListener('DOMContentLoaded', function() {
+    const modalEl = document.getElementById('raceCandidatesModal');
+    if (!modalEl) return;
+
+    modalEl.addEventListener('hidden.bs.modal', function () {
+        try {
+            // Destroy DataTable if initialized
+            if ($.fn.DataTable.isDataTable('#raceCandidatesTable')) {
+                $('#raceCandidatesTable').DataTable().destroy();
+            }
+        } catch (err) {
+            console.warn('Error destroying DataTable on modal hide', err);
+        }
+
+        // Clear table body and reset title
+        const tbody = document.getElementById('raceCandidatesTableBody');
+        if (tbody) tbody.innerHTML = '';
+
+        const modalLabel = document.getElementById('raceCandidatesModalLabel');
+        if (modalLabel) modalLabel.textContent = 'Candidates';
+
+        // Reset reference
+        raceCandidatesDataTable = null;
+    });
+});

@@ -6,9 +6,11 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 from werkzeug.utils import secure_filename
 import json
 import re
+import math
 
 # Set up logging
-logging.basicConfig(level=logging.DEBUG)
+# Run at INFO by default to avoid verbose debug output. Set to DEBUG when troubleshooting.
+logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key")
@@ -57,6 +59,42 @@ RACE_TARGETS = {
     'Indian Male': 15,
     'Indian Female': 27
 }
+
+
+def normalize_race(val):
+    """Normalize a raw race string to one of the canonical labels used in targets.
+
+    Returns one of: 'African', 'Coloured', 'Indian', 'White', or a cleaned original fallback.
+    """
+    if pd.isna(val):
+        return 'Unknown'
+    v = str(val).strip()
+    low = v.lower()
+
+    # Common variations mapping
+    if 'afric' in low or 'black' in low:
+        return 'African'
+    if 'colou' in low or 'coloured' in low:
+        return 'Coloured'
+    if 'indian' in low:
+        return 'Indian'
+    if 'white' in low:
+        return 'White'
+
+    # Fallback to original cleaned value
+    return v if v else 'Unknown'
+
+
+def normalize_gender(val):
+    """Normalize gender into 'Female', 'Male' or original fallback."""
+    if pd.isna(val):
+        return 'Unknown'
+    low = str(val).strip().lower()
+    if 'female' in low:
+        return 'Female'
+    if 'male' in low:
+        return 'Male'
+    return str(val).strip() if str(val).strip() else 'Unknown'
 
 def check_logo_exists():
     """Check if a custom logo image exists."""
@@ -292,6 +330,89 @@ def get_all_candidates():
         logging.error(f"Error retrieving all candidates: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+
+@app.route('/api/candidates/filter')
+def filter_candidates():
+    """API endpoint to get filtered candidates by race and/or gender with pagination."""
+    try:
+        race_param = request.args.get('race', default=None, type=str)
+        gender_param = request.args.get('gender', default=None, type=str)
+        page = request.args.get('page', default=1, type=int)
+        per_page = request.args.get('per_page', default=100, type=int)
+
+        all_candidates = []
+        program_files = [f for f in os.listdir(DATA_DIR) if f.endswith('.csv')]
+
+        for file in program_files:
+            program_name = os.path.splitext(file)[0]
+            file_path = os.path.join(DATA_DIR, file)
+
+            # Read the CSV file
+            df = pd.read_csv(file_path)
+
+            # Add program column
+            df['Program'] = program_name
+
+            all_candidates.append(df)
+
+        if not all_candidates:
+            return jsonify({
+                'total': 0,
+                'page': page,
+                'per_page': per_page,
+                'total_pages': 0,
+                'candidates': []
+            })
+
+        all_df = pd.concat(all_candidates, ignore_index=True)
+
+        # Add normalized race column for filtering using shared helper
+        if 'Race' in all_df.columns:
+            all_df['Race_Normalized'] = all_df['Race'].apply(normalize_race)
+        else:
+            all_df['Race_Normalized'] = 'Unknown'
+
+        # Ensure Gender column exists for filtering and normalize it
+        if 'Gender' not in all_df.columns:
+            all_df['Gender'] = ''
+        all_df['Gender_Normalized'] = all_df['Gender'].apply(normalize_gender)
+
+        filtered = all_df
+
+        # Apply race filter if provided (use shared normalization for robustness)
+        if race_param:
+            rp_norm = normalize_race(race_param)
+            logging.info(f"Filter requested race='{race_param}' normalized to '{rp_norm}'")
+            filtered = filtered[filtered['Race_Normalized'] == rp_norm]
+
+        # Apply gender filter if provided (use normalized gender equality)
+        if gender_param:
+            gp_norm = normalize_gender(gender_param)
+            logging.info(f"Filter requested gender='{gender_param}' normalized to '{gp_norm}'")
+            filtered = filtered[filtered['Gender_Normalized'] == gp_norm]
+
+        total = len(filtered)
+        total_pages = math.ceil(total / per_page) if per_page > 0 else 1
+
+        # Pagination
+        start = (page - 1) * per_page
+        end = start + per_page
+        paged = filtered.iloc[start:end]
+
+        candidates = paged.fillna('').to_dict('records')
+
+        return jsonify({
+            'total': total,
+            'page': page,
+            'per_page': per_page,
+            'total_pages': total_pages,
+            'candidates': candidates
+        })
+
+    except Exception as e:
+        logging.error(f"Error filtering candidates: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/dashboard/metrics')
 def get_dashboard_metrics():
     """API endpoint to get dashboard metrics."""
@@ -392,43 +513,38 @@ def get_dashboard_metrics():
             else:
                 metrics['race_counts'] = {"Unknown": metrics['total_candidates']}
 
-            # Define a mapping from the DataFrame race values to your target race labels
-            race_map = {
-                'Black': 'African',
-                'Coloured': 'Coloured',
-                'Indian': 'Indian',
-                'White': 'White'
-            }
+            # Normalize Race and Gender and produce Race_Gender values consistently
+            if 'Race' in all_df.columns:
+                all_df['Race_Normalized'] = all_df['Race'].apply(normalize_race)
+            else:
+                all_df['Race_Normalized'] = 'Unknown'
 
-            # Check that both columns exist
-            if 'Race' in all_df.columns and 'Gender' in all_df.columns:
-                print("DEBUG: 'Race' and 'Gender' columns found.")
+            # Normalize gender into simple Male/Female/Other text using shared helper
+            if 'Gender' in all_df.columns:
+                all_df['Gender_Normalized'] = all_df['Gender'].apply(normalize_gender)
+            else:
+                all_df['Gender_Normalized'] = 'Unknown'
 
-                # Map Race to target labels and combine with Gender
-                all_df['Race_Gender'] = all_df.apply(
-                    lambda row: f"{race_map.get(row['Race'], 'Unknown')} {row['Gender']}" 
-                    if pd.notna(row['Race']) and pd.notna(row['Gender']) 
-                    else "Unknown", axis=1
-                )
-                print("DEBUG: 'Race_Gender' column created:")
-                print(all_df[['Race', 'Gender', 'Race_Gender']].head())
+            # Create combined Race_Gender column using normalized values
+            all_df['Race_Gender'] = all_df.apply(
+                lambda row: f"{row['Race_Normalized']} {row['Gender_Normalized']}" 
+                if pd.notna(row['Race_Normalized']) and pd.notna(row['Gender_Normalized']) 
+                else 'Unknown', axis=1
+            )
 
-                # Count by race-gender combination
-                race_gender_counts = all_df['Race_Gender'].value_counts().to_dict()
-                print("DEBUG: Race-gender counts calculated:")
-                print(race_gender_counts)
-                metrics['race_gender_counts'] = race_gender_counts
+            # Count by race-gender combination
+            race_gender_counts = all_df['Race_Gender'].value_counts().to_dict()
+            metrics['race_gender_counts'] = race_gender_counts
 
-                # Initialize progress dictionary if not already
-                if 'race_gender_progress' not in metrics:
-                    metrics['race_gender_progress'] = {}
+            # Initialize progress dictionary if not already
+            if 'race_gender_progress' not in metrics:
+                metrics['race_gender_progress'] = {}
 
-                # Calculate progress percentages for each target
-                for target_key, target_value in RACE_TARGETS.items():
-                    count = race_gender_counts.get(target_key, 0)
-                    progress = (count / target_value * 100) if target_value > 0 else 0
-                    metrics['race_gender_progress'][target_key] = round(progress, 2)
-                    print(f"DEBUG: Target '{target_key}': count={count}, target={target_value}, progress={progress:.2f}%")
+            # Calculate progress percentages for each target
+            for target_key, target_value in RACE_TARGETS.items():
+                count = race_gender_counts.get(target_key, 0)
+                progress = (count / target_value * 100) if target_value > 0 else 0
+                metrics['race_gender_progress'][target_key] = round(progress, 2)
 
 
         return jsonify(metrics)

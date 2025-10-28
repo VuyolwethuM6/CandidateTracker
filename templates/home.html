@@ -183,6 +183,34 @@
         </div>
     </div>
 </div>
+
+<!-- Race-Gender Candidates Modal -->
+<div class="modal fade" id="raceCandidatesModal" tabindex="-1" aria-labelledby="raceCandidatesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="raceCandidatesModalLabel">Candidates</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="raceCandidatesTable" style="width:100%">
+                        <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Gender</th>
+                                        <th>PWD</th>
+                                        <th>Program</th>
+                                    </tr>
+                        </thead>
+                        <tbody id="raceCandidatesTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
