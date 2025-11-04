@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="interview-emails-page">
+    <h1 class="mb-4">Interview Email Automation</h1>
+
+    <div class="card mb-4">
+        <div class="card-header">Upload Candidates CSV</div>
+        <div class="card-body">
+            <form id="uploadForm">
+                <div class="mb-3">
+                    <input type="file" id="fileInput" accept=".csv" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label for="filterDecision">Send only for decision:</label>
+                    <select id="filterDecision" class="form-select">
+                        <option value="">(all)</option>
+                        <option value="Proceed">Proceed</option>
+                        <option value="Decline">Decline</option>
+                        <option value="Hold">Hold</option>
+                    </select>
+                </div>
+                <button id="uploadBtn" class="btn btn-primary">Upload & Preview</button>
+            </form>
+        </div>
+    </div>
+    
+
+    <div class="card mb-4" id="previewCard" style="display:none;">
+        <div class="card-header">Preview</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-sm" id="previewTable">
+                    <thead>
+                        <tr><th>#</th><th>Name</th><th>Surname</th><th>Email</th><th>Decision</th><th>Feedback</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button id="generateBtn" class="btn btn-success">Generate & Send Emails</button>
+                <button id="previewOnlyBtn" class="btn btn-secondary">Generate (Preview only)</button>
+                <a id="downloadLogs" href="/api/interview-emails/logs" class="btn btn-outline-info">Download Logs</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" id="statusCard" style="display:none;">
+        <div class="card-header">Status</div>
+        <div class="card-body">
+            <div class="progress mb-3" style="height:24px;">
+                <div id="overallProgress" class="progress-bar" role="progressbar" style="width:0%">0%</div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm" id="statusTable">
+                    <thead><tr><th>#</th><th>Email</th><th>Status</th><th>Message</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/interview_emails.js') }}"></script>
+{% endblock %}

@@ -77,6 +77,12 @@
                                 <span>Manage Candidates</span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('interview_email.interview_emails_page') }}" class="nav-link {% if '/interview-emails' in request.path %}active{% else %}text-white{% endif %} d-flex align-items-center">
+                                <i class="fas fa-envelope me-3"></i>
+                                <span>Interview Emails</span>
+                            </a>
+                        </li>
                     </ul>
                     
                     <hr class="my-4">

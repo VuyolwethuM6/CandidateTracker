@@ -8,6 +8,41 @@ import json
 import re
 import math
 
+# Load .env into environment early so modules can read secrets during import
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except Exception:
+    # If python-dotenv isn't installed, environment variables must be set externally
+    pass
+    # Attempt a lightweight .env loader as a fallback so .env works without python-dotenv
+    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    if os.path.exists(env_path):
+        try:
+            with open(env_path, 'r', encoding='utf-8') as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line or line.startswith('#'):
+                        continue
+                    if '=' not in line:
+                        continue
+                    key, val = line.split('=', 1)
+                    key = key.strip()
+                    val = val.strip().strip('"').strip("'")
+                    # Do not overwrite existing environment variables
+                    if key and key not in os.environ:
+                        os.environ[key] = val
+            logging.info('Loaded .env fallback variables')
+        except Exception:
+            logging.exception('Failed to load .env fallback')
+
+# Register interview email blueprint
+try:
+    from interview_email import interview_bp
+    # register blueprint later after app is created
+except Exception:
+    interview_bp = None
+
 # Set up logging
 # Run at INFO by default to avoid verbose debug output. Set to DEBUG when troubleshooting.
 logging.basicConfig(level=logging.INFO)
@@ -628,4 +663,8 @@ def delete_program():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
+    # Register blueprint if available
+    if interview_bp is not None:
+        app.register_blueprint(interview_bp)
+
     app.run(host='0.0.0.0', port=5000, debug=True)
