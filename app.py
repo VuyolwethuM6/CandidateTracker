@@ -55,6 +55,17 @@ DATA_DIR = './data'
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
 
+# Register interview email blueprint at module import time so routes are
+# available whether the module is run directly or imported by another runner
+# (e.g. `main.py`). This prevents the interview-emails page from only being
+# available when `app.py` is executed as __main__.
+if interview_bp is not None:
+    try:
+        app.register_blueprint(interview_bp)
+    except Exception:
+        # Defensive: log registration failure but allow app to continue loading
+        logging.exception('Failed to register interview_email blueprint')
+
 # Define columns for uploaded files with possible variations
 # Some columns are required, others are now optional for testing
 REQUIRED_COLUMNS = {
@@ -663,8 +674,4 @@ def delete_program():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    # Register blueprint if available
-    if interview_bp is not None:
-        app.register_blueprint(interview_bp)
-
     app.run(host='0.0.0.0', port=5000, debug=True)
